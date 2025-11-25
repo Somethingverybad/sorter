@@ -1,0 +1,18 @@
+services:
+  web:
+    build: .
+    container_name: sorter
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=False
+    restart: unless-stopped
+    command: python manage.py runserver 0.0.0.0:8000
+    networks:
+      - sorter_network
+
+networks:
+  sorter_network:
+    driver: bridge

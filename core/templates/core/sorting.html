@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сортировка камней</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ffa8a8 100%);
+            --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .header-gradient {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.9);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .stone-card {
+            border-left: 4px solid;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stone-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+        }
+
+        .stone-card:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stone-red { 
+            border-color: #dc3545; 
+            background: linear-gradient(135deg, #ff6b6b, #ffa8a8);
+            color: #fff;
+        }
+        .stone-blue { 
+            border-color: #0d6efd; 
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #fff;
+        }
+        .stone-green { 
+            border-color: #198754; 
+            background: linear-gradient(135deg, #51cf66, #94d82d);
+            color: #fff;
+        }
+        .stone-yellow { 
+            border-color: #ffc107; 
+            background: linear-gradient(135deg, #ffd43b, #ffe066);
+            color: #000;
+        }
+        .stone-purple { 
+            border-color: #6f42c1; 
+            background: linear-gradient(135deg, #cc5de8, #e599f7);
+            color: #fff;
+        }
+        .stone-orange { 
+            border-color: #fd7e14; 
+            background: linear-gradient(135deg, #ff922b, #ffc078);
+            color: #000;
+        }
+
+        .container-card {
+            border: 2px solid #e9ecef;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .container-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .mass-indicator {
+            font-weight: 700;
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .mass-good { 
+            background: var(--success-gradient);
+            color: white;
+            border: none;
+        }
+
+        .btn-gradient {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .distribution-container {
+            border: 3px solid #51cf66;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #f0fff4, #ffffff);
+            box-shadow: 0 8px 32px rgba(81, 207, 102, 0.2);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stats-card {
+            background: var(--dark-gradient);
+            color: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .badge {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+        }
+
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .stone-card {
+                margin-bottom: 0.75rem;
+            }
+            
+            .mass-indicator {
+                font-size: 0.85rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            .floating-btn {
+                bottom: 1rem;
+                right: 1rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+            
+            .header-gradient h1 {
+                font-size: 1.75rem;
+            }
+            
+            .header-gradient p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .col-md-3, .col-sm-6 {
+                margin-bottom: 0.5rem;
+            }
+            
+            .distribution-container {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .btn-lg {
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Анимации */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Плавающая кнопка для быстрой очистки -->
+    {% if containers or stones %}
+    <a href="#" class="floating-btn btn btn-danger" data-bs-toggle="modal" data-bs-target="#clearModal">
+        <i class="bi bi-arrow-repeat"></i>
+    </a>
+    {% endif %}
+
+    <div class="header-gradient py-4 py-md-5 mb-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="bi bi-gem me-3"></i>Время собирать камни?
+                    </h1>
+                    <p class="lead mb-0 opacity-90"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Статистика -->
+        {% if containers or stones %}
+        <div class="row mb-4">
+            <div class="col-md-3 col-6">
+                <div class="stats-card text-center">
+                    <i class="bi bi-archive display-6 d-block mb-2"></i>
+                    <h4 class="mb-1">{{ containers|length }}</h4>
+                    <small>Контейнеров</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stats-card text-center">
+                    <i class="bi bi-gem display-6 d-block mb-2"></i>
+                    <h4 class="mb-1">{{ stones|length }}</h4>
+                    <small>камней</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stats-card text-center">
+                    <i class="bi bi-speedometer2 display-6 d-block mb-2"></i>
+                    <h4 class="mb-1">
+                        {% if stones %}
+                            {{ stones|length|floatformat:0 }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </h4>
+                    <small>Всего карат</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stats-card text-center">
+                    <i class="bi bi-check-circle display-6 d-block mb-2"></i>
+                    <h4 class="mb-1">
+                        {% if sorting_result and sorting_result.success %}
+                            ✅
+                        {% else %}
+                            ⏳
+                        {% endif %}
+                    </h4>
+                    <small>Статус</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Формы ввода -->
+        <div class="row g-4 mb-4">
+            <!-- Форма добавления контейнера -->
+            <div class="col-xl-6 col-lg-12">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-archive me-2"></i>Добавить контейнер
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Название контейнера</label>
+                                <input type="text" name="container_name" class="form-control" 
+                                       value="Контейнер {{ containers|length|add:1 }}" required>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Целевая масса (карат)</label>
+                                        <input type="number" name="target_mass" class="form-control" 
+                                               step="0.01" min="0.01" placeholder="5.00" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Погрешность (карат)</label>
+                                        <input type="number" name="tolerance" class="form-control" 
+                                               step="0.01" min="0.01" max="0.01" value="0.01" required>
+                                        <div class="form-text">Максимум 0.01 карата</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" name="add_container" class="btn btn-gradient w-100">
+                                <i class="bi bi-plus-circle me-2"></i>Создать контейнер
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Форма добавления камня -->
+            <div class="col-xl-6 col-lg-12">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-gem me-2"></i>Добавить камень
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Масса камня (карат)</label>
+                                <input type="number" name="mass" class="form-control" 
+                                       step="0.01" min="0.01" placeholder="1.50" required>
+                                <div class="form-text">Номер и цвет назначаются автоматически</div>
+                            </div>
+                            <button type="submit" name="add_stone" class="btn btn-success w-100" 
+                                    style="background: var(--success-gradient); border: none;">
+                                <i class="bi bi-plus-lg me-2"></i>Добавить камень
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Контейнеры -->
+        {% if containers %}
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-archive me-2"></i>Контейнеры
+                    <span class="badge bg-primary ms-2">{{ containers|length }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    {% for container in containers %}
+                    <div class="col-xxl-4 col-lg-6 col-md-12">
+                        <div class="container-card">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h6 class="mb-0 fw-bold text-primary">{{ container.name }}</h6>
+                                <form method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="container_id" value="{{ container.id }}">
+                                    <button type="submit" name="remove_container" 
+                                            class="btn btn-outline-danger btn-sm"
+                                            onclick="return confirm('Удалить контейнер?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <small class="text-muted">Целевая масса:</small>
+                                    <div class="fw-semibold">{{ container.target_mass }} кт</div>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Погрешность:</small>
+                                    <div class="fw-semibold">±{{ container.tolerance }} кт</div>
+                                </div>
+                            </div>
+                            <div class="bg-light rounded p-2">
+                                <small class="text-muted d-block">Диапазон:</small>
+                                <span class="fw-semibold">{{ container.min_mass|floatformat:2 }} - {{ container.max_mass|floatformat:2 }} кт</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- камни -->
+        {% if stones %}
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-gem me-2"></i>камни
+                    <span class="badge bg-warning ms-2">{{ stones|length }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    {% for stone in stones %}
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <div class="stone-card stone-{{ stone.color }} p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong class="fs-5">#{{ stone.number }}</strong>
+                                <span class="badge bg-dark">{{ stone.mass }} кт</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small>{{ stone.color_display }}</small>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="stone_number" value="{{ stone.number }}">
+                                    <button type="submit" name="remove_stone" 
+                                            class="btn btn-outline-light btn-sm"
+                                            onclick="return confirm('Удалить камень?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <!-- Кнопка сортировки -->
+        {% if containers and stones %}
+        <div class="text-center mb-4">
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="sort_stones" class="btn btn-gradient btn-lg pulse">
+                    <i class="bi bi-shuffle me-2"></i>Рассортировать камни
+                </button>
+            </form>
+        </div>
+        {% endif %}
+        <!-- Результаты сортировки -->
+        {% if sorting_result %}
+            {% if sorting_result.success %}
+            <div class="distribution-container fade-in">
+                <div class="text-center mb-4">
+                    <h4 class="text-success fw-bold">
+                        <i class="bi bi-check-circle-fill me-2"></i>Распределение найдено!
+                    </h4>
+                    <p class="text-muted">камни успешно распределены по контейнерам</p>
+                </div>
+                
+                {% for container_id, container_data in sorting_result.distribution.items %}
+                <div class="container-card mb-4">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
+                        <h5 class="mb-2 mb-md-0 fw-bold text-primary">{{ container_data.container.name }}</h5>
+                        <span class="mass-indicator mass-good">
+                            {{ container_data.total_mass|floatformat:2 }} кт 
+                            <small>(отклонение: {{ container_data.deviation|floatformat:2 }} кт)</small>
+                        </span>
+                    </div>
+                    <p class="mb-3">
+                        <strong>Целевая масса:</strong> {{ container_data.container.target_mass }} кт ±{{ container_data.container.tolerance }} кт
+                    </p>
+                    <div class="row g-2">
+                        {% for stone in container_data.stones %}
+                        <div class="col-xxl-3 col-lg-4 col-md-6 col-sm-12">
+                            <div class="stone-card stone-{{ stone.color }} p-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong>#{{ stone.number }}</strong>
+                                    <span class="badge bg-dark">{{ stone.mass }} кт</span>
+                                </div>
+                                <small>{{ stone.color_display }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-danger text-center fade-in">
+                <h5 class="fw-bold">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ sorting_result.message }}
+                </h5>
+            </div>
+            {% endif %}
+        {% endif %}
+
+        <!-- Кнопка очистки -->
+        {% if containers or stones %}
+        <div class="text-center mb-5">
+            <button type="button" class="btn btn-outline-danger btn-lg" data-bs-toggle="modal" data-bs-target="#clearModal">
+                <i class="bi bi-arrow-repeat me-2"></i>Начать заново
+            </button>
+        </div>
+        {% endif %}
+    </div>
+
+
+
+    <!-- Modal для очистки -->
+    <div class="modal fade" id="clearModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение очистки</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить все контейнеры и камни? Это действие нельзя отменить.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" name="clear_all" class="btn btn-danger">Очистить всё</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Анимация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('fade-in');
+            });
+        });
+
+        // Плавная прокрутка
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

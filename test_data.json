@@ -1,0 +1,102 @@
+{
+  "containers": [
+    {
+      "id": 1,
+      "name": "Контейнер 1",
+      "target_mass": 382.0,
+      "tolerance": 62.54,
+      "min_mass": 319.46,
+      "max_mass": 444.54
+    },
+    {
+      "id": 2,
+      "name": "Контейнер 2",
+      "target_mass": 525.59,
+      "tolerance": 28.1,
+      "min_mass": 497.49,
+      "max_mass": 553.69
+    },
+    {
+      "id": 3,
+      "name": "Контейнер 3",
+      "target_mass": 483.86,
+      "tolerance": 77.14,
+      "min_mass": 406.72,
+      "max_mass": 561.01
+    }
+  ],
+  "stones": [
+    {
+      "number": 1,
+      "mass": 154.51,
+      "color": "red",
+      "color_display": "Красный"
+    },
+    {
+      "number": 2,
+      "mass": 54.01,
+      "color": "blue",
+      "color_display": "Синий"
+    },
+    {
+      "number": 3,
+      "mass": 175.21,
+      "color": "green",
+      "color_display": "Зеленый"
+    },
+    {
+      "number": 4,
+      "mass": 180.83,
+      "color": "yellow",
+      "color_display": "Желтый"
+    },
+    {
+      "number": 5,
+      "mass": 119.28,
+      "color": "purple",
+      "color_display": "Фиолетовый"
+    },
+    {
+      "number": 6,
+      "mass": 72.5,
+      "color": "orange",
+      "color_display": "Оранжевый"
+    },
+    {
+      "number": 7,
+      "mass": 157.98,
+      "color": "red",
+      "color_display": "Красный"
+    },
+    {
+      "number": 8,
+      "mass": 90.09,
+      "color": "blue",
+      "color_display": "Синий"
+    },
+    {
+      "number": 9,
+      "mass": 140.6,
+      "color": "green",
+      "color_display": "Зеленый"
+    },
+    {
+      "number": 10,
+      "mass": 198.93,
+      "color": "yellow",
+      "color_display": "Желтый"
+    },
+    {
+      "number": 11,
+      "mass": 153.25,
+      "color": "purple",
+      "color_display": "Фиолетовый"
+    },
+    {
+      "number": 12,
+      "mass": 81.8,
+      "color": "orange",
+      "color_display": "Оранжевый"
+    }
+  ]
+}
